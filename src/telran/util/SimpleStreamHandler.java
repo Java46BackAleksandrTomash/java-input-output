@@ -1,27 +1,21 @@
 package telran.util;
-
-import java.io.PrintStream;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
 public class SimpleStreamHandler implements Handler {
-
-	private PrintStream stream;
 	
+	 PrintStream stream;
 	public SimpleStreamHandler(PrintStream stream) {
+		super();
 		this.stream = stream;
 	}
-
 	@Override
 	public void publish(LoggerRecord loggerRecord) {
-		stream.printf("%s %s %s %s\n", getTime(loggerRecord), 
-				loggerRecord.level, loggerRecord.loggerName, loggerRecord.message);
-	}
+		LocalDateTime ldt = LocalDateTime.ofInstant(loggerRecord.timestamp,
+				ZoneId.of(loggerRecord.zoneId));
+		stream.printf("%s %s %s %s\n", ldt, loggerRecord.level,
+				loggerRecord.loggerName, loggerRecord.message);
 
-	private LocalDateTime getTime(LoggerRecord loggerRecord) {
-		ZoneId z = ZoneId.of(loggerRecord.zoneId);
-		LocalDateTime time = loggerRecord.timestamp.atZone(z).toLocalDateTime();
-		return time;
 	}
 
 }
